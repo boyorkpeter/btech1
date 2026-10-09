@@ -827,3 +827,44 @@ select {
     color: #302b26;
     font-weight: 500;
 }
+
+
+.feature-card h3 {
+  color: #181512;
+  font-weight: 700;
+}
+
+.feature-card p,
+.pricing-card > p,
+.price-list,
+.testimonial-card p {
+  color: #302b26;
+  font-weight: 500;
+}
+
+.stat-value {
+  color: #70451f;
+}
+
+.stat-label {
+  color: #302b26;
+  font-weight: 600;
+}
+
+.pricing-card h4 {
+  color: #302b26;
+  font-weight: 700;
+}
+
+.price {
+  color: #181512;
+}
+
+.price span {
+  color: #302b26;
+}
+
+.person small {
+  color: #51483f;
+  font-weight: 500;
+}
