@@ -100,7 +100,7 @@ const variants = {
     detail: 'pricing',
     pricing: [
       { name: 'Launch', price: 'GHS 1,200', description: 'For a focused business landing page.', points: ['One-page website', 'WhatsApp or email CTA', 'Mobile responsive design'], featured: false },
-      { name: 'Growth', price: 'GHS 2,500', description: 'For a business ready to look established.', points: ['Up to five pages', 'Gallery, services, or menu section', 'Domain and deployment support'], featured: true },
+      { name: 'Growth', price: 'GHS 2,500+', description: 'For a business ready to look established.', points: ['Up to five pages', 'Gallery, services, or menu section', 'Domain and deployment support'], featured: true },
       { name: 'Signature', price: 'GHS 4,000+', description: 'For a premium website or focused business system.', points: ['Custom visual direction', 'Daily activity or sales dashboard', 'Final quote based on scope'], featured: false },
     ],
   },
