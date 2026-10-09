@@ -814,3 +814,16 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+.resource-card h4 {
+    letter-spacing: 0.1em;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: #70451f;
+}
+
+.resource-card p {
+    color: #302b26;
+    font-weight: 500;
+}
