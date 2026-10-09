@@ -148,9 +148,10 @@ body::before {
 
 .nav a {
   position: relative;
-  color: var(--muted);
+  color: #302b26;
   text-decoration: none;
-  font-size: 0.78rem;
+  font-size: 0.8rem;
+  font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   transition: color 0.2s ease;
