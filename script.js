@@ -1,15 +1,6 @@
 const canvas = document.getElementById('scene');
 const ctx = canvas.getContext('2d');
 
-const particleCountInput = document.getElementById('particleCount');
-const gravityStrengthInput = document.getElementById('gravityStrength');
-const themeSelect = document.getElementById('themeSelect');
-const soundToggle = document.getElementById('soundToggle');
-const volumeControl = document.getElementById('volumeControl');
-const particleCountValue = document.getElementById('particleCountValue');
-const gravityValue = document.getElementById('gravityValue');
-const volumeValue = document.getElementById('volumeValue');
-
 const brandName = document.getElementById('brandName');
 const navLinks = document.getElementById('navLinks');
 const navAction = document.getElementById('navAction');
@@ -128,11 +119,11 @@ const variants = {
 };
 
 const state = {
-  particleCount: Number(particleCountInput.value),
-  gravityStrength: Number(gravityStrengthInput.value),
-  theme: themeSelect.value,
+  particleCount: 18,
+  gravityStrength: 120,
+  theme: 'aurora',
   variant: 'developer',
-  volume: Number(volumeControl.value) / 100,
+  volume: 0.6,
   muted: false,
 };
 
@@ -475,11 +466,6 @@ function generateOrbs() {
   }));
 }
 
-function syncControlLabels() {
-  particleCountValue.textContent = state.particleCount;
-  gravityValue.textContent = state.gravityStrength;
-}
-
 function resize() {
   width = window.innerWidth;
   height = window.innerHeight;
@@ -507,42 +493,6 @@ function updatePointer(event) {
   audioEngine.resume();
   audioEngine.playPointerPulse(pointer.x, pointer.y);
 }
-
-particleCountInput.addEventListener('input', (event) => {
-  state.particleCount = Number(event.target.value);
-  syncControlLabels();
-  generateOrbs();
-});
-
-gravityStrengthInput.addEventListener('input', (event) => {
-  state.gravityStrength = Number(event.target.value);
-  syncControlLabels();
-});
-
-themeSelect.addEventListener('change', (event) => {
-  state.theme = event.target.value;
-  generateOrbs();
-});
-
-function syncAudioControls() {
-  const volumePercent = Math.round(state.volume * 100);
-  volumeValue.textContent = `${volumePercent}%`;
-  volumeControl.value = String(volumePercent);
-  soundToggle.textContent = state.muted ? 'Off' : 'On';
-  soundToggle.setAttribute('aria-pressed', String(!state.muted));
-  audioEngine.setVolume(state.volume);
-}
-
-soundToggle.addEventListener('click', () => {
-  state.muted = !state.muted;
-  audioEngine.resume();
-  syncAudioControls();
-});
-
-volumeControl.addEventListener('input', (event) => {
-  state.volume = Number(event.target.value) / 100;
-  syncAudioControls();
-});
 
 window.addEventListener('pointermove', updatePointer);
 window.addEventListener('pointerdown', updatePointer);
@@ -683,8 +633,6 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-syncControlLabels();
-syncAudioControls();
 renderVariant();
 resize();
 animate();
