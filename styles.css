@@ -144,16 +144,16 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
+  gap: 26px;
 }
 
 .nav a {
   position: relative;
-  color: #51483f;
+  color: #302b26;
   text-decoration: none;
-  font-size: 0.7rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   transition: color 0.2s ease;
 }
@@ -194,7 +194,7 @@ select:focus-visible {
 .primary,
 .secondary {
   border: 1px solid rgba(24, 21, 18, 0.1);
-  border-radius: 4px;
+  border-radius: 2px;
   padding: 0.9rem 1.4rem;
   font-size: 0.72rem;
   letter-spacing: 0.12em;
@@ -212,12 +212,13 @@ select:focus-visible {
 
 .nav-button {
   flex: 0 0 auto;
-  padding: 0.78rem 1rem;
+  padding: 0.9rem 1.4rem;
   background: #211f1c;
   border-color: #211f1c;
   color: #fffaf2;
-  font-size: 0.64rem;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.12em;
   white-space: nowrap;
   box-shadow: 0 6px 16px rgba(24, 21, 18, 0.14);
 }
@@ -643,8 +644,8 @@ select:focus-visible {
   }
 
   .brand {
-    letter-spacing: 0.16em;
-    font-size: 0.82rem;
+    letter-spacing: 0.18em;
+    font-size: 1rem;
   }
 
   .topbar {
@@ -654,18 +655,7 @@ select:focus-visible {
 
   .topbar .nav-button {
     width: auto;
-    padding: 0.68rem 0.72rem;
-    font-size: 0.58rem;
-    letter-spacing: 0.08em;
-  }
-
-  .nav {
-    gap: 12px 16px;
-  }
-
-  .nav a {
-    font-size: 0.64rem;
-    letter-spacing: 0.08em;
+    padding: 0.9rem 1.4rem;
   }
 
   .nav-button,
