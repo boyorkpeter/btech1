@@ -82,18 +82,19 @@ body::before {
   align-items: center;
   justify-content: space-between;
   gap: 18px;
-  padding: 12px 18px;
-  border: 1px solid rgba(24, 21, 18, 0.08);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.52);
+  padding: 14px 22px;
+  border: 1px solid rgba(255, 250, 242, 0.2);
+  border-radius: 8px;
+  background: rgba(255, 250, 242, 0.94);
   -webkit-backdrop-filter: blur(18px);
   backdrop-filter: blur(18px);
-  box-shadow: 0 12px 32px rgba(24, 21, 18, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .brand {
+  flex: 0 0 auto;
   font-size: 1rem;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.18em;
   font-weight: 600;
   color: var(--text);
   text-shadow: none;
@@ -142,16 +143,17 @@ body::before {
 .nav {
   display: flex;
   align-items: center;
-  gap: 26px;
+  justify-content: center;
+  gap: 24px;
 }
 
 .nav a {
   position: relative;
-  color: #302b26;
+  color: #51483f;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   transition: color 0.2s ease;
 }
@@ -192,7 +194,7 @@ select:focus-visible {
 .primary,
 .secondary {
   border: 1px solid rgba(24, 21, 18, 0.1);
-  border-radius: 2px;
+  border-radius: 4px;
   padding: 0.9rem 1.4rem;
   font-size: 0.72rem;
   letter-spacing: 0.12em;
@@ -208,6 +210,18 @@ select:focus-visible {
   box-shadow: 0 12px 30px rgba(184, 141, 98, 0.08);
 }
 
+.nav-button {
+  flex: 0 0 auto;
+  padding: 0.78rem 1rem;
+  background: #211f1c;
+  border-color: #211f1c;
+  color: #fffaf2;
+  font-size: 0.64rem;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 6px 16px rgba(24, 21, 18, 0.14);
+}
+
 .secondary {
   background: rgba(255, 255, 255, 0.35);
   color: var(--text);
@@ -219,6 +233,13 @@ select:focus-visible {
   transform: translateY(-1px);
   border-color: rgba(24, 21, 18, 0.18);
   box-shadow: 0 16px 38px rgba(184, 141, 98, 0.12);
+}
+
+.nav-button:hover,
+.nav-button:focus-visible {
+  background: #70451f;
+  border-color: #70451f;
+  color: #fffaf2;
 }
 
 .hero {
@@ -574,16 +595,16 @@ select:focus-visible {
 
 @media (max-width: 860px) {
   .topbar {
-    flex-wrap: wrap;
-    justify-content: center;
-    border-radius: 4px;
-    padding: 14px 14px 12px;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 12px 16px;
+    padding: 12px 16px;
   }
 
   .top-actions {
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
+    grid-column: 2;
+    grid-row: 1;
+    justify-content: flex-end;
   }
 
   .variant-switcher {
@@ -594,15 +615,11 @@ select:focus-visible {
   }
 
   .nav {
-    order: 3;
-    width: 100%;
+    grid-column: 1 / -1;
+    grid-row: 2;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 18px 20px;
-  }
-
-  .nav a {
-    letter-spacing: 0.1em;
+    gap: 12px 22px;
   }
 
   .feature-grid,
@@ -626,8 +643,29 @@ select:focus-visible {
   }
 
   .brand {
-    letter-spacing: 0.18em;
-    font-size: 0.72rem;
+    letter-spacing: 0.16em;
+    font-size: 0.82rem;
+  }
+
+  .topbar {
+    gap: 10px 8px;
+    padding: 11px 12px;
+  }
+
+  .topbar .nav-button {
+    width: auto;
+    padding: 0.68rem 0.72rem;
+    font-size: 0.58rem;
+    letter-spacing: 0.08em;
+  }
+
+  .nav {
+    gap: 12px 16px;
+  }
+
+  .nav a {
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
   }
 
   .nav-button,
