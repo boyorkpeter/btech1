@@ -23,13 +23,6 @@ const linkedinProfileUrl = 'https://www.linkedin.com/in/peter-boyork-2538a932b/'
 const githubProfileUrl = 'https://github.com/boyorkpeter';
 document.getElementById('whatsappFloat').href = whatsappUrl;
 
-const themes = {
-  aurora: { base: 165, accent: '#8ed8c8' },
-  sunset: { base: 28, accent: '#d88a62' },
-  violet: { base: 270, accent: '#aa91d8' },
-  ice: { base: 205, accent: '#86bdd6' },
-};
-
 const variants = {
   saas: {
     brand: 'AURORA',
@@ -119,118 +112,8 @@ const variants = {
 };
 
 const state = {
-  particleCount: 18,
-  gravityStrength: 120,
-  theme: 'aurora',
   variant: 'developer',
-  volume: 0.6,
-  muted: false,
 };
-
-const audioEngine = {
-  ctx: null,
-  masterGain: null,
-  ambientGain: null,
-  init() {
-    if (this.ctx) return;
-
-    const AudioCtor = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtor) return;
-
-    this.ctx = new AudioCtor();
-    this.masterGain = this.ctx.createGain();
-    this.masterGain.gain.value = 0.16;
-    this.masterGain.connect(this.ctx.destination);
-
-    this.ambientGain = this.ctx.createGain();
-    this.ambientGain.gain.value = 0.04;
-    this.ambientGain.connect(this.masterGain);
-
-    const drone1 = this.ctx.createOscillator();
-    drone1.type = 'sine';
-    drone1.frequency.value = 88;
-
-    const drone2 = this.ctx.createOscillator();
-    drone2.type = 'triangle';
-    drone2.frequency.value = 132;
-
-    const filter = this.ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 820;
-    filter.Q.value = 0.7;
-
-    drone1.connect(filter);
-    drone2.connect(filter);
-    filter.connect(this.ambientGain);
-
-    const lfo = this.ctx.createOscillator();
-    const lfoGain = this.ctx.createGain();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.09;
-    lfoGain.gain.value = 18;
-    lfo.connect(lfoGain);
-    lfoGain.connect(drone1.frequency);
-    lfoGain.connect(drone2.frequency);
-
-    drone1.start();
-    drone2.start();
-    lfo.start();
-  },
-  resume() {
-    if (!this.ctx) this.init();
-    if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
-    }
-  },
-  setVolume(value) {
-    if (!this.masterGain) return;
-    const safeValue = Math.min(Math.max(value, 0), 1);
-    this.masterGain.gain.value = state.muted ? 0 : safeValue * 0.22;
-  },
-  playPulse({ frequency = 220, duration = 0.16, gain = 0.05, type = 'sine' } = {}) {
-    if (!this.ctx || state.muted) return;
-
-    const oscillator = this.ctx.createOscillator();
-    const output = this.ctx.createGain();
-
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(frequency, this.ctx.currentTime);
-
-    output.gain.setValueAtTime(0.0001, this.ctx.currentTime);
-    output.gain.exponentialRampToValueAtTime(gain, this.ctx.currentTime + 0.02);
-    output.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + duration);
-
-    oscillator.connect(output);
-    output.connect(this.masterGain);
-
-    oscillator.start();
-    oscillator.stop(this.ctx.currentTime + duration + 0.04);
-  },
-  playPointerPulse(x, y) {
-    if (!this.ctx) return;
-    const normalizedX = x / Math.max(width, 1);
-    const frequency = 180 + normalizedX * 220 + (y / Math.max(height, 1)) * 30;
-    this.playPulse({ frequency, duration: 0.12, gain: 0.04, type: 'triangle' });
-  },
-  playCollisionPulse() {
-    if (!this.ctx) return;
-    const frequency = 150 + Math.random() * 110;
-    this.playPulse({ frequency, duration: 0.08, gain: 0.03, type: 'square' });
-  },
-};
-
-function hexToRgba(hex, alpha) {
-  const safeHex = hex.replace('#', '');
-  const normalized = safeHex.length === 3
-    ? safeHex.split('').map((c) => c + c).join('')
-    : safeHex;
-
-  const value = Number.parseInt(normalized, 16);
-  const r = (value >> 16) & 255;
-  const g = (value >> 8) & 255;
-  const b = value & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
-}
 
 function renderVariant() {
   const variant = variants[state.variant];
@@ -449,190 +332,67 @@ variantButtons.forEach((button) => {
 
 let width = 0;
 let height = 0;
-let pointer = { x: window.innerWidth / 2, y: window.innerHeight / 2, active: true };
-let stars = [];
-let orbs = [];
-
-function generateOrbs() {
-  const theme = themes[state.theme];
-  orbs = Array.from({ length: state.particleCount }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    vx: (Math.random() - 0.5) * 1.5,
-    vy: (Math.random() - 0.5) * 1.5,
-    r: Math.random() * 10 + 7,
-    hue: theme.base + Math.random() * 100 - 20,
-    phase: Math.random() * Math.PI * 2,
-  }));
-}
+let animationFrame = 0;
+const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const ambientLights = [
+  { x: 0.14, y: 0.2, radius: 0.42, phase: 0, color: 'rgba(190, 132, 78, 0.16)' },
+  { x: 0.84, y: 0.26, radius: 0.34, phase: 2.1, color: 'rgba(112, 137, 151, 0.12)' },
+  { x: 0.72, y: 0.88, radius: 0.48, phase: 4.2, color: 'rgba(164, 120, 73, 0.09)' },
+];
 
 function resize() {
   width = window.innerWidth;
   height = window.innerHeight;
-  canvas.width = width * devicePixelRatio;
-  canvas.height = height * devicePixelRatio;
+  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = width * pixelRatio;
+  canvas.height = height * pixelRatio;
   canvas.style.width = width + 'px';
   canvas.style.height = height + 'px';
-  ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
-
-  stars = Array.from({ length: 220 }, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    r: Math.random() * 2.3 + 0.7,
-    a: Math.random() * 0.7 + 0.2,
-    drift: Math.random() * 0.6 + 0.2,
-  }));
-
-  generateOrbs();
+  ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+  drawBackground(performance.now());
 }
 
-function updatePointer(event) {
-  pointer.x = event.clientX;
-  pointer.y = event.clientY;
-  pointer.active = true;
-  audioEngine.resume();
-  audioEngine.playPointerPulse(pointer.x, pointer.y);
-}
-
-window.addEventListener('pointermove', updatePointer);
-window.addEventListener('pointerdown', updatePointer);
-window.addEventListener('pointerleave', () => {
-  pointer.active = false;
-});
 window.addEventListener('resize', resize);
 
-function drawBackground() {
+function drawBackground(time) {
   ctx.clearRect(0, 0, width, height);
-
-  const g = ctx.createRadialGradient(
-    width * 0.5,
-    height * 0.5,
-    0,
-    width * 0.5,
-    height * 0.5,
-    Math.max(width, height) * 0.7
-  );
-  g.addColorStop(0, 'rgba(19, 33, 67, 0.7)');
-  g.addColorStop(0.4, 'rgba(8, 16, 31, 0.55)');
-  g.addColorStop(1, 'rgba(2, 5, 14, 0.9)');
-  ctx.fillStyle = g;
+  const base = ctx.createLinearGradient(0, 0, width, height);
+  base.addColorStop(0, '#191918');
+  base.addColorStop(0.52, '#20201e');
+  base.addColorStop(1, '#171817');
+  ctx.fillStyle = base;
   ctx.fillRect(0, 0, width, height);
 
-  for (const star of stars) {
-    star.y += star.drift;
-    if (star.y > height + 4) {
-      star.y = -4;
-      star.x = Math.random() * width;
-    }
-
-    ctx.beginPath();
-    ctx.fillStyle = `rgba(255,255,255,${star.a})`;
-    ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-    ctx.fill();
+  for (const light of ambientLights) {
+    const drift = reducedMotion.matches ? 0 : Math.sin(time * 0.00012 + light.phase) * 0.025;
+    const x = width * (light.x + drift);
+    const y = height * (light.y - drift);
+    const radius = Math.max(width, height) * light.radius;
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    glow.addColorStop(0, light.color);
+    glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = glow;
+    ctx.fillRect(0, 0, width, height);
   }
 }
 
-function updateOrbs() {
-  for (let i = 0; i < orbs.length; i += 1) {
-    const orb = orbs[i];
-    const dx = pointer.x - orb.x;
-    const dy = pointer.y - orb.y;
-    const distSq = dx * dx + dy * dy + 0.001;
-    const dist = Math.sqrt(distSq);
-
-    const force = pointer.active ? state.gravityStrength / distSq : 0;
-    const nx = dx / dist;
-    const ny = dy / dist;
-
-    orb.vx += (nx * force - orb.vx * 0.004) * 0.35;
-    orb.vy += (ny * force - orb.vy * 0.004) * 0.35;
-
-    orb.vx *= 0.992;
-    orb.vy *= 0.992;
-
-    orb.x += orb.vx + Math.sin((Date.now() * 0.002) + orb.phase) * 0.26;
-    orb.y += orb.vy + Math.cos((Date.now() * 0.0017) + orb.phase) * 0.26;
-
-    for (let j = i + 1; j < orbs.length; j += 1) {
-      const other = orbs[j];
-      const dx2 = orb.x - other.x;
-      const dy2 = orb.y - other.y;
-      const distance = Math.hypot(dx2, dy2) || 0.001;
-      const minDistance = orb.r + other.r + 6;
-
-      if (distance < minDistance) {
-        const angle = Math.atan2(dy2, dx2);
-        const overlap = (minDistance - distance) * 0.5;
-        const pushX = Math.cos(angle) * overlap;
-        const pushY = Math.sin(angle) * overlap;
-
-        orb.x += pushX;
-        orb.y += pushY;
-        other.x -= pushX;
-        other.y -= pushY;
-
-        orb.vx += Math.cos(angle) * 0.22;
-        orb.vy += Math.sin(angle) * 0.22;
-        other.vx -= Math.cos(angle) * 0.22;
-        other.vy -= Math.sin(angle) * 0.22;
-
-        audioEngine.resume();
-        audioEngine.playCollisionPulse();
-      }
-    }
-
-    if (orb.x < -40) orb.x = width + 40;
-    if (orb.x > width + 40) orb.x = -40;
-    if (orb.y < -40) orb.y = height + 40;
-    if (orb.y > height + 40) orb.y = -40;
+function animate(time) {
+  drawBackground(time);
+  if (!reducedMotion.matches && !document.hidden) {
+    animationFrame = requestAnimationFrame(animate);
   }
 }
 
-function drawField() {
-  const pulse = 1 + Math.sin(Date.now() * 0.0015) * 0.12;
-  const r = 90 * pulse;
-  const accent = themes[state.theme].accent;
-
-  ctx.beginPath();
-  ctx.fillStyle = hexToRgba(accent, 0.06);
-  ctx.arc(pointer.x, pointer.y, r, 0, Math.PI * 2);
-  ctx.fill();
-
-  ctx.beginPath();
-  ctx.strokeStyle = accent;
-  ctx.lineWidth = 1.2;
-  ctx.arc(pointer.x, pointer.y, r + 24, 0, Math.PI * 2);
-  ctx.stroke();
-}
-
-function drawOrbs() {
-  for (const orb of orbs) {
-    const glow = 16 + orb.r * 1.5;
-    const grad = ctx.createRadialGradient(orb.x, orb.y, 0, orb.x, orb.y, glow);
-    grad.addColorStop(0, `hsla(${orb.hue}, 100%, 72%, 1)`);
-    grad.addColorStop(0.35, `hsla(${orb.hue + 8}, 100%, 65%, 0.7)`);
-    grad.addColorStop(1, `hsla(${orb.hue + 12}, 100%, 60%, 0)`);
-
-    ctx.beginPath();
-    ctx.fillStyle = grad;
-    ctx.arc(orb.x, orb.y, glow, 0, Math.PI * 2);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.fillStyle = `hsla(${orb.hue}, 100%, 75%, 0.95)`;
-    ctx.arc(orb.x, orb.y, orb.r, 0, Math.PI * 2);
-    ctx.fill();
-  }
-}
-
-function animate() {
-  drawBackground();
-  updateOrbs();
-  drawField();
-  drawOrbs();
-  requestAnimationFrame(animate);
+function updateAnimation() {
+  cancelAnimationFrame(animationFrame);
+  if (document.hidden) return;
+  animate(performance.now());
 }
 
 renderVariant();
 resize();
-animate();
+if (!reducedMotion.matches) {
+  animationFrame = requestAnimationFrame(animate);
+}
+document.addEventListener('visibilitychange', updateAnimation);
+reducedMotion.addEventListener('change', updateAnimation);
